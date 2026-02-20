@@ -1,0 +1,153 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ================= BODY ================= */
+
+body {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* ================= PHONE WRAPPER ================= */
+
+.phone-wrapper {
+    width: 100%;
+    max-width: 420px;     /* Smartphone width */
+    height: 92vh;         /* 9:16 feel */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    overflow-y: auto;
+    color: white;
+}
+
+/* ================= CONTAINER ================= */
+
+.container {
+    text-align: center;
+}
+
+/* ================= TITLE ================= */
+
+.title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 13px;
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+/* ================= CARD ================= */
+
+.card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    padding: 22px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.card h2 {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+/* ================= INPUTS (COLUMN ALIGNED) ================= */
+
+.card input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+/* ================= SAVE BUTTON ================= */
+
+.btn-save {
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px;
+    background: linear-gradient(45deg, #ff6b6b, #ff4757);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-save:hover {
+    transform: scale(1.05);
+}
+
+/* ================= SOS CARD ================= */
+
+.sos-card {
+    background: linear-gradient(135deg, #ff2e4d, #ff4b2b);
+    padding: 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    position: relative;
+    animation: pulse 2s infinite;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    user-select: none;            /* Disable text selection */
+    -ebkit-user-select: none;    /* Safari */
+    -ms-user-select: none;        /* IE */
+    -webkit-touch-callout: none;  /* Disable iOS callout menu */
+    touch-action: manipulation;   /* Improve tap response */
+}
+
+
+.sos-card h2 {
+    font-size: 20px;
+}
+
+.pattern {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.feedback {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+/* ================= SOS PULSE ANIMATION ================= */
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(255, 0, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width: 480px) {
+    .phone-wrapper {
+        height: 100vh;
+        border-radius: 0;
+    }
+}

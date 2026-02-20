@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeWalk - Personal Safety App</title>
+
+    <!-- Mobile App Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=6">
+</head>
+
+<body>
+
+<div class="phone-wrapper">
+
+    <div class="container">
+
+        <h1 class="title">🛡️ SafeWalk</h1>
+        <p class="subtitle">Your Personal Safety Companion</p>
+
+        <!-- USER DETAILS -->
+        <div class="card">
+            <h2>👤 Save Your Details</h2>
+
+            <input type="text" id="name" placeholder="Enter Your Name">
+            <input type="text" id="contact" placeholder="Emergency Contact Number">
+            <input type="text" id="address" placeholder="Your Address">
+
+            <button onclick="saveUser()" class="btn-save">
+                💾 Save Details
+            </button>
+        </div>
+
+        <!-- EMERGENCY ACTIVATION -->
+        <div class="card sos-card" id="emergencyBtn">
+            <h2>🚨 Emergency Activation</h2>
+            <p>Tap Pattern:</p>
+            <p class="pattern"><strong>Short → Short → Short</strong></p>
+
+            <div id="feedback" class="feedback"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Sounds -->
+<audio id="alarmSound" src="{{ url_for('static', filename='alarm.mp3') }}"></audio>
+<audio id="ringtoneSound" src="{{ url_for('static', filename='ringtone.mp3') }}"></audio>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
