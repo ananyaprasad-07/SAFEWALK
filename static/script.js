@@ -19,15 +19,20 @@ function saveUser() {
 }
 
 
-// ================= TAP PATTERN LOGIC =================
+// ================= VARIABLES =================
 
 let tapSequence = [];
 let pressStart = 0;
+let lastTapTime = 0;
+let sosActive = false;
 
 const emergencyBtn = document.getElementById("emergencyBtn");
+const stopBtn = document.getElementById("stopBtn");
 const feedback = document.getElementById("feedback");
 
-// Mobile Touch
+
+// ================= MOBILE TOUCH =================
+
 emergencyBtn.addEventListener("touchstart", (e) => {
     e.preventDefault();
     pressStart = Date.now();
@@ -39,7 +44,9 @@ emergencyBtn.addEventListener("touchend", (e) => {
     handleTap(duration);
 });
 
-// Desktop Mouse
+
+// ================= DESKTOP =================
+
 emergencyBtn.addEventListener("mousedown", () => {
     pressStart = Date.now();
 });
@@ -54,29 +61,29 @@ emergencyBtn.addEventListener("mouseup", () => {
 
 function handleTap(duration) {
 
-    // Only accept SHORT presses
+    if (sosActive) return;  // prevent re-trigger
+
+    const now = Date.now();
+
+    // Reset if gap between taps > 2 seconds
+    if (now - lastTapTime > 2000) {
+        tapSequence = [];
+    }
+
+    lastTapTime = now;
+
+    // Accept only SHORT presses
     if (duration < 300) {
         tapSequence.push("short");
         feedback.innerText = `Short Press ${tapSequence.length}/3`;
     } else {
-        // If long press → reset
         feedback.innerText = "Only short taps allowed. Resetting...";
         tapSequence = [];
         return;
     }
 
-    checkPattern();
-}
-
-
-// ================= CHECK PATTERN =================
-
-function checkPattern() {
-
     if (tapSequence.length === 3) {
-
-        activateSOS();   // No need to compare now
-
+        activateSOS();
         tapSequence = [];
         feedback.innerText = "";
     }
@@ -87,10 +94,14 @@ function checkPattern() {
 
 function activateSOS() {
 
+    sosActive = true;
+
     alert("🚨 SOS Activated!");
 
     playAlarm();
     triggerFakeCall();
+
+    stopBtn.style.display = "block";
 
     if (navigator.geolocation) {
 
@@ -98,13 +109,22 @@ function activateSOS() {
 
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            const locationLink = `https://maps.google.com/?q=${lat},${lon}`;
 
+            // Send latitude and longitude so server receives expected keys
             fetch('/send_sos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ location: locationLink })
-            });
+                body: JSON.stringify({ latitude: lat, longitude: lon })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.wa_link) {
+                    window.open(data.wa_link, '_blank');
+                } else if (data.error) {
+                    alert('Error sending SOS: ' + data.error);
+                }
+            })
+            .catch(err => console.error('SOS request failed', err));
 
         }, function() {
             alert("Unable to get location");
@@ -113,6 +133,28 @@ function activateSOS() {
     } else {
         alert("Geolocation not supported");
     }
+}
+
+
+// ================= STOP SOS =================
+
+stopBtn.addEventListener("click", stopSOS);
+
+function stopSOS() {
+
+    const alarm = document.getElementById("alarmSound");
+    const ringtone = document.getElementById("ringtoneSound");
+
+    alarm.pause();
+    alarm.currentTime = 0;
+
+    ringtone.pause();
+    ringtone.currentTime = 0;
+
+    stopBtn.style.display = "none";
+    sosActive = false;
+
+    alert("SOS Stopped");
 }
 
 
@@ -139,14 +181,3 @@ function triggerFakeCall() {
         ringtone.currentTime = 0;
     }, 10000);
 }
-// Touch support (mobile)
-emergencyBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault();   // 🔥 Prevent text selection
-    pressStart = Date.now();
-});
-
-emergencyBtn.addEventListener("touchend", (e) => {
-    e.preventDefault();   // 🔥 Prevent default mobile behavior
-    let duration = Date.now() - pressStart;
-    handleTap(duration);
-});

@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SafeWalk - Personal Safety App</title>
 
-    <!-- Mobile App Font -->
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=6">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=7">
 </head>
 
 <body>
@@ -21,12 +21,12 @@
         <h1 class="title">🛡️ SafeWalk</h1>
         <p class="subtitle">Your Personal Safety Companion</p>
 
-        <!-- USER DETAILS -->
+        <!-- ================= USER DETAILS ================= -->
         <div class="card">
             <h2>👤 Save Your Details</h2>
 
-            <input type="text" id="name" placeholder="Enter Your Name">
-            <input type="text" id="contact" placeholder="Emergency Contact Number">
+            <input type="text" id="name" placeholder="Enter Your Name" required>
+            <input type="text" id="contact" placeholder="Emergency Contact Number" required>
             <input type="text" id="address" placeholder="Your Address">
 
             <button onclick="saveUser()" class="btn-save">
@@ -34,7 +34,7 @@
             </button>
         </div>
 
-        <!-- EMERGENCY ACTIVATION -->
+        <!-- ================= EMERGENCY ACTIVATION ================= -->
         <div class="card sos-card" id="emergencyBtn">
             <h2>🚨 Emergency Activation</h2>
             <p>Tap Pattern:</p>
@@ -43,14 +43,20 @@
             <div id="feedback" class="feedback"></div>
         </div>
 
+        <!-- ================= STOP SOS BUTTON ================= -->
+        <button id="stopBtn" style="display:none;">
+            🛑 Stop SOS
+        </button>
+
     </div>
 
 </div>
 
-<!-- Sounds -->
+<!-- ================= SOUNDS ================= -->
 <audio id="alarmSound" src="{{ url_for('static', filename='alarm.mp3') }}"></audio>
 <audio id="ringtoneSound" src="{{ url_for('static', filename='ringtone.mp3') }}"></audio>
 
+<!-- ================= SCRIPT ================= -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>

@@ -1,15 +1,23 @@
 from flask import Flask, render_template, request, jsonify
 from twilio.rest import Client
 import sqlite3
+import os
+from urllib.parse import quote
+import re
 
 app = Flask(__name__)
 
 # ---------------- TWILIO ----------------
-TWILIO_SID = "YOUR_TWILIO_SID"
-TWILIO_AUTH_TOKEN = "YOUR_TWILIO_AUTH_TOKEN"
-TWILIO_PHONE = "YOUR_TWILIO_PHONE"
+# Read Twilio credentials from environment variables in development/production.
+# If not set, `client` will be None and the app will return a clear error instead
+# of raising an exception from the Twilio SDK.
+TWILIO_SID = os.getenv("TWILIO_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE = os.getenv("TWILIO_PHONE")
 
-client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
+client = None
+if TWILIO_SID and TWILIO_AUTH_TOKEN and TWILIO_PHONE:
+    client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
 
 # ---------------- DATABASE ----------------
 def init_db():
@@ -53,7 +61,14 @@ def save_user():
 @app.route('/send_sos', methods=['POST'])
 def send_sos():
     data = request.get_json()
-    location = data['location']
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+
+    if not latitude or not longitude:
+        return jsonify({"error": "Location not provided"}), 400
+
+    # Generate Google Maps Link
+    maps_link = f"https://www.google.com/maps?q={latitude},{longitude}"
 
     conn = sqlite3.connect("users.db")
     c = conn.cursor()
@@ -69,16 +84,22 @@ def send_sos():
     message = f"""
 🚨 EMERGENCY ALERT 🚨
 Name: {name}
-Live Location: {location}
+
+Live Location:
+{maps_link}
 """
 
-    client.messages.create(
-        body=message,
-        from_=TWILIO_PHONE,
-        to=contact
-    )
+    # Sanitize the stored contact and build a WhatsApp wa.me link.
+    # Expecting `contact` to include country code (e.g. +1234567890 or 1234567890).
+    phone_digits = re.sub(r"\D", "", contact or "")
+    if phone_digits.startswith("0"):
+        # don't strip country code automatically; assume correct format, but keep this fallback
+        phone_digits = phone_digits.lstrip("0")
 
-    return jsonify({"status": "SOS Sent"})
+    encoded = quote(message)
+    wa_link = f"https://wa.me/{phone_digits}?text={encoded}"
+
+    return jsonify({"status": "WA Link Generated", "wa_link": wa_link})
 
 
 if __name__ == "__main__":
