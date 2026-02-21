@@ -21,8 +21,8 @@ if TWILIO_SID and TWILIO_AUTH_TOKEN and TWILIO_PHONE:
 
 # ---------------- DATABASE ----------------
 def init_db():
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
+conn = sqlite3.connect("/app/data/users.db")
+c = conn.cursor()
     c.execute("""
         CREATE TABLE IF NOT EXISTS user (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
